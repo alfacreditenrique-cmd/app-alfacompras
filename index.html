@@ -175,18 +175,19 @@
         // ==========================================
         const WHATSAPP_NUMBER = "50586920352"; 
         
-        // ¡LINK DE FIREBASE INTEGRADO! (Sin la barra o los dos puntos al final)
-        const FIREBASE_URL = "https://alfacompras-default-rtdb.firebaseio.com"; 
+        // ¡REEMPLAZA ESTA URL CON LA QUE TE DIO FIREBASE! 
+        // Asegúrate de que termine en .app o .com
+        const FIREBASE_URL = "https://tu-proyecto-firebase-default-rtdb.firebaseio.com"; 
 
         let isAdminAuthed = false;
-        let products = []; 
+        let products = []; // Ahora la lista vive en la memoria, pero se sincroniza con la nube
 
         function processDriveLinks(inputStr) {
             if (!inputStr) return [];
             return inputStr.split(',').map(url => {
                 let cleanUrl = url.trim();
                 const match = cleanUrl.match(/[-\w]{25,}/);
-                return match ? `https://lh3.googleusercontent.com/d/${match[0]}` : cleanUrl;
+                return match ? `https://lh3.googleusercontent.com/d/$${match[0]}` : cleanUrl;
             }).filter(url => url !== "");
         }
 
@@ -194,14 +195,18 @@
         // LÓGICA DE BASE DE DATOS (NUBE)
         // ==========================================
 
+        // Cargar datos al iniciar
         async function fetchProducts() {
             try {
+                // Hacemos una petición GET a Firebase (.json es obligatorio al final de la URL)
                 const response = await fetch(`${FIREBASE_URL}/productos.json`);
                 const data = await response.json();
                 
+                // Firebase devuelve un objeto si hay datos, o null si está vacío
                 if (data) {
+                    // Convertimos el objeto de Firebase en un Array para poder usar map/filter
                     products = Object.keys(data).map(key => ({
-                        firebaseKey: key,
+                        firebaseKey: key, // Guardamos la llave única de Firebase
                         ...data[key]
                     }));
                 } else {
@@ -211,16 +216,18 @@
                 console.error("Error al cargar datos:", error);
                 alert("Hubo un problema conectando a la base de datos.");
             } finally {
+                // Ocultar pantalla de carga
                 document.getElementById('loadingOverlay').classList.add('hidden');
                 renderCatalog();
                 if(isAdminAuthed) renderAdmin();
             }
         }
 
+        // Guardar o Actualizar un producto en la nube
         async function saveProductToDB(productData, firebaseKey = null) {
             const url = firebaseKey 
-                ? `${FIREBASE_URL}/productos/${firebaseKey}.json` 
-                : `${FIREBASE_URL}/productos.json`; 
+                ? `${FIREBASE_URL}/productos/${firebaseKey}.json` // Actualizar (PUT)
+                : `${FIREBASE_URL}/productos.json`; // Crear nuevo (POST)
             
             const method = firebaseKey ? 'PUT' : 'POST';
 
@@ -230,6 +237,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(productData)
                 });
+                // Recargar toda la lista para reflejar cambios
                 await fetchProducts(); 
             } catch (error) {
                 console.error("Error al guardar:", error);
@@ -237,7 +245,9 @@
             }
         }
 
+        // Iniciar la carga al abrir la página
         document.addEventListener('DOMContentLoaded', () => { fetchProducts(); });
+
 
         // ==========================================
         // INTERFAZ Y RENDERIZADO
@@ -284,6 +294,7 @@
                 let mainImg = imgCount > 0 ? p.images[0] : "https://via.placeholder.com/400x300?text=No+Img";
                 let photoBadge = imgCount > 1 ? `<div class="absolute top-2 right-2 bg-black bg-opacity-70 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-images"></i> +${imgCount - 1} Fotos</div>` : '';
                 let cursorStyle = imgCount > 0 ? "cursor-pointer" : "";
+                // Usamos el ID original que nosotros creamos, no la llave de Firebase para la interfaz
                 let clickAction = imgCount > 0 ? `onclick="openGallery(${p.id})"` : ""; 
 
                 grid.innerHTML += `
@@ -314,6 +325,7 @@
             const tbody = document.getElementById('adminTableBody');
             tbody.innerHTML = '';
             
+            // Revertimos para mostrar los más nuevos primero (basado en la fecha de creación 'id')
             [...products].sort((a,b) => b.id - a.id).forEach(p => {
                 let statusBadge = p.status === 'activo' ? '<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">Activo</span>' :
                                   p.status === 'vendido' ? '<span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold">Vendido</span>' :
@@ -359,18 +371,20 @@
             };
 
             if (id) {
+                // Es una actualización
                 const existingProduct = products.find(p => p.id == id);
-                pData.id = parseInt(id); 
+                pData.id = parseInt(id); // Mantenemos el ID original
                 pData.status = existingProduct.status;
                 pData.historial = existingProduct.historial || [];
                 
                 await saveProductToDB(pData, existingProduct.firebaseKey);
             } else {
-                pData.id = Date.now(); 
+                // Es uno nuevo
+                pData.id = Date.now(); // Nuestro ID interno
                 pData.status = 'activo';
                 pData.historial = [];
                 
-                await saveProductToDB(pData); 
+                await saveProductToDB(pData); // Sin firebaseKey crea uno nuevo
             }
             
             resetForm(); 
@@ -380,13 +394,14 @@
 
         function editProduct(id) {
             const p = products.find(prod => prod.id === id);
-            document.getElementById('productId').value = p.id; 
+            document.getElementById('productId').value = p.id; // Usamos nuestro ID interno
             document.getElementById('name').value = p.name;
             document.getElementById('price').value = p.price;
             document.getElementById('department').value = p.department;
             
+            // Revertimos la URL de la imagen para que pueda editar el link de Drive
             let originalLinks = p.images.map(url => {
-                const match = url.match(/d\/([-\w]{25,})/);
+                const match = url.match(/1([-\w]{25,})/);
                 return match ? `https://drive.google.com/file/d/${match[1]}/view` : url;
             });
 
@@ -400,6 +415,7 @@
             const product = products.find(p => p.id === id);
             product.status = newStatus;
             
+            // Eliminamos la firebaseKey del objeto antes de enviarlo (para no duplicarla dentro del JSON)
             const dataToSave = {...product};
             delete dataToSave.firebaseKey;
 
