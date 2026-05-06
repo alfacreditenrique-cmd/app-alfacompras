@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ALFACOMPRAS - Catálogo</title>
-    
-    <!-- FAVICON (El logo en la pestaña del navegador) -->
+    <title>ALFACOMPRAS - Gestión Avanzada</title>
     <link rel="icon" href="logo.png" type="image/png">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -15,140 +13,157 @@
             theme: {
                 extend: {
                     colors: {
-                        /* Colores basados en la marca AlfaCredit */
                         alfagreen: '#1aa31a', 
                         alfagrey: '#4a4a4a',
-                        primary: '#1f2937', 
-                        whatsapp: '#25D366',
-                        darkinput: '#2b2b36'
+                        whatsapp: '#25D366'
                     }
                 }
             }
         }
     </script>
-    <style>
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* Efecto suave para las tarjetas */
-        .product-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-    </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
 
-    <!-- Navegación Superior -->
+    <!-- Navegación -->
     <nav class="bg-white shadow-sm p-4 sticky top-0 z-40 border-b border-gray-200">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <!-- LOGO Y TÍTULO -->
             <div class="flex items-center gap-3">
-                <!-- Asegúrate de tener la imagen logo.png en tu repositorio -->
                 <img src="logo.png" alt="AlfaCredit Logo" class="h-10 object-contain" onerror="this.style.display='none'">
                 <h1 class="text-2xl font-extrabold text-alfagrey tracking-tight">ALFA<span class="text-alfagreen">COMPRAS</span></h1>
             </div>
-            
             <div class="flex gap-2">
-                <button onclick="showView('catalog')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md font-semibold transition hover:bg-gray-200"><i class="fas fa-store"></i> Catálogo</button>
-                <button onclick="tryAdmin()" class="px-4 py-2 bg-alfagrey text-white rounded-md font-semibold transition hover:bg-black"><i class="fas fa-cog"></i> Admin</button>
+                <button onclick="showView('catalog')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md font-semibold hover:bg-gray-200 transition"><i class="fas fa-store"></i> Catálogo</button>
+                <button onclick="tryAdmin()" class="px-4 py-2 bg-alfagrey text-white rounded-md font-semibold hover:bg-black transition"><i class="fas fa-cog"></i> Admin</button>
             </div>
         </div>
     </nav>
 
-    <!-- VISTA CLIENTE: Catálogo -->
+    <!-- VISTA CLIENTE -->
     <main id="catalogView" class="max-w-7xl mx-auto p-6 block">
         <div class="text-center mb-10 mt-4">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-3">Productos Disponibles</h2>
-            <p class="text-gray-500">¡Confiamos en ti! Encuentra lo que buscas al mejor precio.</p>
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">Productos Disponibles</h2>
+            <p class="text-gray-500">Encuentra lo que buscas al mejor precio.</p>
         </div>
         
-        <!-- Input oscuro para el nombre del cliente -->
-        <div class="max-w-lg mx-auto mb-10 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+        <div class="max-w-lg mx-auto mb-10 bg-white p-4 rounded-xl shadow-sm border border-gray-200">
             <label class="block text-sm font-semibold text-gray-600 mb-2"><i class="fas fa-user-circle text-alfagreen"></i> ¿Quién realiza el pedido?</label>
-            <input type="text" id="globalClientName" placeholder="Ingresa tu nombre y apellido" class="w-full bg-darkinput text-white rounded-lg border-none p-3 focus:ring-2 focus:ring-alfagreen outline-none transition">
+            <input type="text" id="globalClientName" placeholder="Ingresa tu nombre y apellido" class="w-full bg-gray-100 text-gray-800 rounded-lg border-none p-3 focus:ring-2 focus:ring-alfagreen outline-none transition">
         </div>
 
-        <div id="productGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Los productos se inyectan aquí con JS -->
-        </div>
+        <div id="productGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
     </main>
 
-    <!-- VISTA ADMIN: Panel de Gestión -->
+    <!-- VISTA ADMIN -->
     <main id="adminView" class="max-w-7xl mx-auto p-6 hidden">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-3xl font-bold text-gray-800">Panel de Administración</h2>
-            <button onclick="logoutAdmin()" class="text-red-500 hover:text-red-700 font-bold px-4 py-2 bg-red-50 rounded-lg"><i class="fas fa-sign-out-alt"></i> Salir</button>
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+            <h2 class="text-3xl font-bold text-gray-800">Panel de Control</h2>
+            <div class="flex gap-3">
+                <!-- BOTÓN PARA DESCARGAR BASE DE DATOS -->
+                <button onclick="downloadInventoryCSV()" class="px-4 py-2 bg-blue-600 text-white rounded-lg font-bold shadow-sm hover:bg-blue-700 transition flex items-center gap-2">
+                    <i class="fas fa-file-excel"></i> Descargar Reporte
+                </button>
+                <button onclick="logoutAdmin()" class="px-4 py-2 bg-red-100 text-red-600 rounded-lg font-bold hover:bg-red-200 transition"><i class="fas fa-sign-out-alt"></i> Salir</button>
+            </div>
         </div>
         
-        <!-- Formulario para Crear/Editar -->
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8">
+        <!-- Formulario Crear/Editar -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-8">
             <h3 class="text-xl font-bold mb-4 text-alfagreen" id="formTitle">Agregar Nuevo Producto</h3>
-            <form id="productForm" onsubmit="saveProduct(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form id="productForm" onsubmit="saveProduct(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <input type="hidden" id="productId">
-                <div>
+                <div class="md:col-span-2">
                     <label class="block text-sm font-medium text-gray-700">Nombre del Artículo</label>
-                    <input type="text" id="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2 focus:ring-alfagreen focus:border-alfagreen">
+                    <input type="text" id="name" required class="mt-1 w-full rounded-md border-gray-300 border p-2 focus:ring-alfagreen focus:border-alfagreen">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Precio ($)</label>
-                    <input type="number" step="0.01" id="price" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2 focus:ring-alfagreen focus:border-alfagreen">
+                    <input type="number" step="0.01" id="price" required class="mt-1 w-full rounded-md border-gray-300 border p-2 focus:ring-alfagreen focus:border-alfagreen">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Sucursal / Ubicación</label>
-                    <input type="text" id="department" required placeholder="Ej. Estelí, Managua..." class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2 focus:ring-alfagreen focus:border-alfagreen">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Enlaces de G-Drive (Separados por coma)</label>
-                    <input type="text" id="images" required placeholder="Pega el link de Google Drive aquí" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2 focus:ring-alfagreen focus:border-alfagreen">
+                    <label class="block text-sm font-medium text-gray-700">Sucursal</label>
+                    <input type="text" id="department" required class="mt-1 w-full rounded-md border-gray-300 border p-2 focus:ring-alfagreen focus:border-alfagreen">
                 </div>
                 <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700">Descripción</label>
-                    <textarea id="description" required rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2 focus:ring-alfagreen focus:border-alfagreen"></textarea>
+                    <label class="block text-sm font-medium text-gray-700">Enlaces de G-Drive (Separados por coma)</label>
+                    <input type="text" id="images" required class="mt-1 w-full rounded-md border-gray-300 border p-2 focus:ring-alfagreen focus:border-alfagreen">
                 </div>
-                <div class="md:col-span-2 flex justify-end gap-2 mt-4">
+                <div class="md:col-span-3">
+                    <label class="block text-sm font-medium text-gray-700">Descripción</label>
+                    <textarea id="description" required rows="2" class="mt-1 w-full rounded-md border-gray-300 border p-2 focus:ring-alfagreen focus:border-alfagreen"></textarea>
+                </div>
+                <div class="md:col-span-3 flex justify-end gap-2 mt-2">
                     <button type="button" onclick="resetForm()" class="px-5 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-semibold">Cancelar</button>
-                    <button type="submit" class="px-5 py-2 bg-alfagreen text-white rounded-md hover:bg-green-700 font-semibold shadow-sm">Guardar Producto</button>
+                    <button type="submit" class="px-5 py-2 bg-alfagreen text-white rounded-md hover:bg-green-700 font-semibold">Guardar Producto</button>
                 </div>
             </form>
         </div>
 
         <!-- Tabla de Gestión -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Producto</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Precio</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Sucursal</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Estado</th>
-                            <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="adminTableBody" class="bg-white divide-y divide-gray-200">
-                        <!-- Filas inyectadas con JS -->
-                    </tbody>
-                </table>
-            </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Producto</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Precio</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Estado</th>
+                        <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase">Registro Ventas</th>
+                        <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase">Acciones Rápidas</th>
+                    </tr>
+                </thead>
+                <tbody id="adminTableBody" class="bg-white divide-y divide-gray-200"></tbody>
+            </table>
         </div>
     </main>
 
-    <!-- Modal de Login Admin -->
-    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex justify-center items-center z-50 backdrop-blur-sm">
-        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center">
-            <div class="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
-                <i class="fas fa-lock"></i>
+    <!-- MODAL: REGISTRAR VENTA -->
+    <div id="saleModal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex justify-center items-center z-50 backdrop-blur-sm">
+        <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-md w-full">
+            <h3 class="text-2xl font-bold mb-1 text-alfagreen"><i class="fas fa-handshake"></i> Registrar Venta</h3>
+            <p class="text-sm text-gray-500 mb-4">Ingresa los datos del cliente para el registro.</p>
+            
+            <form id="saleForm" onsubmit="confirmSale(event)">
+                <input type="hidden" id="saleProductId">
+                <div class="mb-3">
+                    <label class="block text-sm font-bold text-gray-700">Nombre del Cliente *</label>
+                    <input type="text" id="saleName" required class="w-full border p-2 rounded-lg mt-1 focus:ring-alfagreen focus:border-alfagreen">
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm font-bold text-gray-700">Teléfono (Opcional)</label>
+                    <input type="tel" id="salePhone" class="w-full border p-2 rounded-lg mt-1 focus:ring-alfagreen focus:border-alfagreen">
+                </div>
+                <div class="mb-5">
+                    <label class="block text-sm font-bold text-gray-700">Cédula (Opcional)</label>
+                    <input type="text" id="saleCedula" class="w-full border p-2 rounded-lg mt-1 focus:ring-alfagreen focus:border-alfagreen">
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="closeSaleModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-bold">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-alfagreen text-white rounded-lg font-bold">Confirmar Venta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: VER HISTORIAL DE VENTAS -->
+    <div id="historyModal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex justify-center items-center z-50 backdrop-blur-sm">
+        <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-lg w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800"><i class="fas fa-history text-alfagreen"></i> Historial del Producto</h3>
+                <button onclick="closeHistoryModal()" class="text-gray-400 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
             </div>
+            <div id="historyContent" class="max-h-60 overflow-y-auto space-y-3">
+                <!-- Se inyecta con JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: LOGIN -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex justify-center items-center z-50 backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-2xl max-w-sm w-full text-center">
             <h3 class="text-2xl font-bold mb-2 text-gray-800">Acceso Admin</h3>
-            <p class="text-sm text-gray-500 mb-6">Ingresa la contraseña para gestionar el inventario.</p>
-            <input type="password" id="adminPwd" class="w-full border-2 border-gray-200 p-3 rounded-lg mb-6 text-center focus:border-alfagreen outline-none transition" placeholder="Contraseña">
-            <div class="flex justify-center gap-3">
-                <button onclick="closeLogin()" class="flex-1 px-4 py-3 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold transition">Cancelar</button>
-                <button onclick="checkAdminPassword()" class="flex-1 px-4 py-3 bg-alfagrey text-white rounded-lg hover:bg-black font-semibold transition">Ingresar</button>
+            <input type="password" id="adminPwd" class="w-full border-2 p-3 rounded-lg mb-6 text-center focus:border-alfagreen outline-none" placeholder="Contraseña">
+            <div class="flex gap-3">
+                <button onclick="closeLogin()" class="flex-1 px-4 py-3 bg-gray-100 rounded-lg font-semibold">Cancelar</button>
+                <button onclick="checkAdminPassword()" class="flex-1 px-4 py-3 bg-alfagrey text-white rounded-lg font-semibold">Ingresar</button>
             </div>
         </div>
     </div>
@@ -157,38 +172,34 @@
         const WHATSAPP_NUMBER = "50586920352"; 
         let isAdminAuthed = false;
 
-        // NUEVA FUNCIÓN PARA ENLACES DE DRIVE (Más robusta contra los bloqueos de Google)
         function processDriveLinks(inputStr) {
             if (!inputStr) return [];
             return inputStr.split(',').map(url => {
                 let cleanUrl = url.trim();
-                // Busca el ID del archivo en diferentes formatos de URL de Drive
                 const match = cleanUrl.match(/\/d\/([a-zA-Z0-9_-]+)/) || cleanUrl.match(/id=([a-zA-Z0-9_-]+)/);
-                if (match) {
-                    // Usamos lh3.googleusercontent.com, que suele permitir la incrustación de imágenes
-                    return `https://lh3.googleusercontent.com/d/${match[1]}`;
-                }
-                return cleanUrl;
+                return match ? `https://lh3.googleusercontent.com/d/${match[1]}` : cleanUrl;
             }).filter(url => url !== "");
         }
 
-        const defaultProducts = [
-            { id: 1, name: "ALFACREDIT S.A", price: 1000000, department: "ESTELI", images: ["logo.png"], description: "VENDO TODA LA COMPAÑIA PARA TI BABY", status: "activo" }
-        ];
+        // CARGA Y GUARDADO DE DATOS (Preparado para ser base de datos)
+        function loadData() {
+            const data = localStorage.getItem('alfa_database');
+            return data ? JSON.parse(data) : [];
+        }
+        function saveData() {
+            localStorage.setItem('alfa_database', JSON.stringify(products));
+        }
 
-        let products = JSON.parse(localStorage.getItem('products')) || defaultProducts;
+        let products = loadData();
 
         document.addEventListener('DOMContentLoaded', () => { renderCatalog(); renderAdmin(); });
 
-        function tryAdmin() {
-            if (isAdminAuthed) { showView('admin'); } 
-            else { document.getElementById('loginModal').classList.remove('hidden'); }
-        }
+        // --- SISTEMA DE LOGIN ---
+        function tryAdmin() { if (isAdminAuthed) showView('admin'); else document.getElementById('loginModal').classList.remove('hidden'); }
         function closeLogin() { document.getElementById('loginModal').classList.add('hidden'); }
         function logoutAdmin() { isAdminAuthed = false; showView('catalog'); }
         function checkAdminPassword() {
-            const pwd = document.getElementById('adminPwd').value;
-            if (pwd === 'admin') {
+            if (document.getElementById('adminPwd').value === 'admin') {
                 isAdminAuthed = true;
                 document.getElementById('adminPwd').value = '';
                 closeLogin();
@@ -202,47 +213,31 @@
             if(view === 'catalog') renderCatalog();
         }
 
+        // --- RENDERIZAR CLIENTE ---
         function renderCatalog() {
             const grid = document.getElementById('productGrid');
             grid.innerHTML = '';
             const activeProducts = products.filter(p => p.status === 'activo');
             
             if(activeProducts.length === 0) {
-                grid.innerHTML = '<div class="col-span-full py-10 text-center"><i class="fas fa-box-open text-6xl text-gray-300 mb-4"></i><p class="text-gray-500 text-lg">No hay productos disponibles.</p></div>';
+                grid.innerHTML = '<div class="col-span-full py-10 text-center"><p class="text-gray-500">No hay productos disponibles.</p></div>';
                 return;
             }
 
             activeProducts.forEach(p => {
-                let imagesHtml = '';
-                const fallbackImg = "https://via.placeholder.com/400x300?text=Imagen+No+Disponible";
-                
-                if (p.images && p.images.length > 1) {
-                    imagesHtml = `<div class="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide h-60 bg-white border-b border-gray-100">`;
-                    p.images.forEach(img => {
-                        imagesHtml += `<img src="${img}" onerror="this.onerror=null; this.src='${fallbackImg}';" class="w-full h-full object-contain shrink-0 snap-center p-2">`;
-                    });
-                    imagesHtml += `</div><div class="text-center text-[10px] font-bold text-gray-400 bg-gray-50 py-1 border-b border-gray-100">↔ Desliza para ver más</div>`;
-                } else {
-                    let singleImg = p.images && p.images.length > 0 ? p.images[0] : fallbackImg;
-                    imagesHtml = `<div class="h-60 bg-white border-b border-gray-100 p-2 flex justify-center items-center">
-                                    <img src="${singleImg}" onerror="this.onerror=null; this.src='${fallbackImg}';" class="max-h-full max-w-full object-contain">
-                                  </div>`;
-                }
-
+                let img = (p.images && p.images.length > 0) ? p.images[0] : "https://via.placeholder.com/400x300?text=No+Img";
                 grid.innerHTML += `
-                    <div class="product-card bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
-                        ${imagesHtml}
-                        <div class="p-6 flex-grow flex flex-col">
-                            <div class="flex justify-between items-start mb-3">
-                                <h3 class="text-xl font-bold text-gray-800 leading-tight pr-2">${p.name}</h3>
-                                <span class="bg-blue-50 text-blue-600 text-xs px-3 py-1.5 rounded-full font-bold whitespace-nowrap"><i class="fas fa-map-marker-alt"></i> ${p.department}</span>
-                            </div>
-                            <p class="text-gray-500 text-sm mb-6 flex-grow leading-relaxed">${p.description}</p>
-                            <div class="flex justify-between items-center mt-auto pt-4 border-t border-gray-100">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden flex flex-col hover:-translate-y-1 transition duration-300">
+                        <div class="h-56 p-2 flex justify-center items-center bg-white border-b border-gray-100">
+                            <img src="${img}" class="max-h-full max-w-full object-contain">
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-lg font-bold text-gray-800">${p.name}</h3>
+                            <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded w-max mt-1"><i class="fas fa-map-marker-alt"></i> ${p.department}</span>
+                            <p class="text-gray-500 text-sm mt-3 mb-4 flex-grow">${p.description}</p>
+                            <div class="flex justify-between items-center border-t border-gray-100 pt-4">
                                 <span class="text-2xl font-black text-gray-900">$${parseFloat(p.price).toFixed(2)}</span>
-                                <button onclick="sendWhatsapp(${p.id})" class="bg-alfagreen text-white font-bold px-5 py-2.5 rounded-xl hover:bg-green-600 transition flex items-center gap-2 shadow-sm hover:shadow-md">
-                                    <i class="fab fa-whatsapp text-xl"></i> Pedir
-                                </button>
+                                <button onclick="sendWhatsapp(${p.id})" class="bg-alfagreen text-white font-bold px-4 py-2 rounded-xl hover:bg-green-600 transition"><i class="fab fa-whatsapp"></i> Pedir</button>
                             </div>
                         </div>
                     </div>
@@ -252,117 +247,170 @@
 
         function sendWhatsapp(id) {
             let clientName = document.getElementById('globalClientName').value.trim();
-            if(!clientName) {
-                alert("Por favor, ingresa tu nombre en la parte superior antes de hacer un pedido.");
-                document.getElementById('globalClientName').focus();
-                return;
-            }
-            
-            const product = products.find(p => p.id === id);
-            const text = `¡Hola! Soy *${clientName}*.\n\nMe interesa el artículo de ALFACOMPRAS:\n📦 *${product.name}*\n📍 Sucursal: ${product.department}\n💵 Precio: $${product.price}\n\n¿Aún está disponible?`;
-            
-            const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
-            window.open(url, '_blank');
+            if(!clientName) { alert("Ingresa tu nombre arriba para hacer el pedido."); return; }
+            const p = products.find(prod => prod.id === id);
+            const text = `¡Hola! Soy *${clientName}*.\n\nMe interesa el artículo:\n📦 *${p.name}*\n📍 ${p.department}\n💵 $${p.price}\n\n¿Aún está disponible?`;
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank');
         }
 
-        // --- PANEL ADMIN ---
+        // --- RENDERIZAR ADMIN ---
         function renderAdmin() {
             const tbody = document.getElementById('adminTableBody');
             tbody.innerHTML = '';
             
             [...products].reverse().forEach(p => {
-                let statusBadge = '';
-                if(p.status === 'activo') statusBadge = '<span class="px-3 py-1 text-xs font-bold rounded-full bg-green-100 text-green-700">Activo</span>';
-                else if(p.status === 'vendido') statusBadge = '<span class="px-3 py-1 text-xs font-bold rounded-full bg-yellow-100 text-yellow-700">Vendido</span>';
-                else statusBadge = '<span class="px-3 py-1 text-xs font-bold rounded-full bg-red-100 text-red-700">Inactivo</span>';
+                let statusBadge = p.status === 'activo' ? '<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">Activo</span>' :
+                                  p.status === 'vendido' ? '<span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold">Vendido</span>' :
+                                  '<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold">Inactivo</span>';
 
-                let thumb = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/40';
+                let historyCount = p.historial ? p.historial.length : 0;
+                let historyBtn = historyCount > 0 
+                    ? `<button onclick="openHistoryModal(${p.id})" class="text-xs bg-blue-50 text-blue-600 font-bold px-2 py-1 rounded border border-blue-200 hover:bg-blue-100"><i class="fas fa-list"></i> Ver (${historyCount})</button>` 
+                    : `<span class="text-xs text-gray-400">Sin ventas</span>`;
 
                 tbody.innerHTML += `
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex items-center">
-                                <img class="h-12 w-12 rounded-lg object-cover border border-gray-200" src="${thumb}" onerror="this.src='https://via.placeholder.com/40'">
-                                <div class="ml-4 font-bold text-gray-800">${p.name}</div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-600">$${parseFloat(p.price).toFixed(2)}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><i class="fas fa-map-marker-alt text-gray-400 mr-1"></i> ${p.department}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">${statusBadge}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <button onclick="editProduct(${p.id})" class="text-blue-500 hover:text-blue-700 bg-blue-50 p-2 rounded-lg mx-1 transition"><i class="fas fa-edit"></i></button>
-                            <button onclick="changeStatus(${p.id}, 'vendido')" class="text-yellow-600 hover:text-yellow-800 bg-yellow-50 p-2 rounded-lg mx-1 transition" title="Marcar Vendido"><i class="fas fa-shopping-cart"></i></button>
-                            <button onclick="changeStatus(${p.id}, 'baja')" class="text-red-500 hover:text-red-700 bg-red-50 p-2 rounded-lg mx-1 transition" title="Dar de baja"><i class="fas fa-ban"></i></button>
-                            <button onclick="changeStatus(${p.id}, 'activo')" class="text-green-600 hover:text-green-800 bg-green-50 p-2 rounded-lg mx-1 transition" title="Activar"><i class="fas fa-check-circle"></i></button>
-                            <button onclick="deleteProduct(${p.id})" class="text-gray-400 hover:text-red-600 ml-3 p-2 transition" title="Eliminar definitivamente"><i class="fas fa-trash"></i></button>
+                    <tr class="hover:bg-gray-50 border-b">
+                        <td class="px-6 py-4"><div class="font-bold text-gray-800">${p.name}</div><div class="text-xs text-gray-500">${p.department}</div></td>
+                        <td class="px-6 py-4 font-bold text-gray-600">$${parseFloat(p.price).toFixed(2)}</td>
+                        <td class="px-6 py-4">${statusBadge}</td>
+                        <td class="px-6 py-4 text-center">${historyBtn}</td>
+                        <td class="px-6 py-4 text-right">
+                            <button onclick="editProduct(${p.id})" class="text-blue-500 bg-blue-50 p-2 rounded-lg mx-1 hover:bg-blue-100" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button onclick="initiateSale(${p.id})" class="text-yellow-600 bg-yellow-50 p-2 rounded-lg mx-1 hover:bg-yellow-100" title="Vender"><i class="fas fa-handshake"></i></button>
+                            <button onclick="updateStatus(${p.id}, 'baja')" class="text-red-500 bg-red-50 p-2 rounded-lg mx-1 hover:bg-red-100" title="Baja"><i class="fas fa-arrow-down"></i></button>
+                            <button onclick="updateStatus(${p.id}, 'activo')" class="text-green-600 bg-green-50 p-2 rounded-lg mx-1 hover:bg-green-100" title="Activar"><i class="fas fa-check"></i></button>
                         </td>
                     </tr>
                 `;
             });
-            localStorage.setItem('products', JSON.stringify(products));
+            saveData();
         }
 
+        // --- GESTIÓN DE PRODUCTOS ---
         function saveProduct(e) {
             e.preventDefault();
             const id = document.getElementById('productId').value;
-            const rawImages = document.getElementById('images').value;
-            
-            const productData = {
+            const pData = {
                 name: document.getElementById('name').value,
                 price: parseFloat(document.getElementById('price').value),
                 department: document.getElementById('department').value,
-                images: processDriveLinks(rawImages),
+                images: processDriveLinks(document.getElementById('images').value),
                 description: document.getElementById('description').value,
-                status: 'activo'
             };
 
             if (id) {
-                const index = products.findIndex(p => p.id == id);
-                productData.status = products[index].status; 
-                productData.id = parseInt(id);
-                products[index] = productData;
+                const idx = products.findIndex(p => p.id == id);
+                pData.id = parseInt(id);
+                pData.status = products[idx].status;
+                pData.historial = products[idx].historial || []; // Mantener historial intácto
+                products[idx] = pData;
             } else {
-                productData.id = Date.now(); 
-                products.push(productData);
+                pData.id = Date.now();
+                pData.status = 'activo';
+                pData.historial = [];
+                products.push(pData);
             }
-
-            resetForm();
-            renderAdmin();
-            renderCatalog();
+            resetForm(); renderAdmin(); renderCatalog();
         }
 
         function editProduct(id) {
-            const product = products.find(p => p.id === id);
-            document.getElementById('productId').value = product.id;
-            document.getElementById('name').value = product.name;
-            document.getElementById('price').value = product.price;
-            document.getElementById('department').value = product.department;
-            
-            // Revertir a la URL original de Drive si es posible para editar
-            let displayImages = product.images.map(url => {
-                const match = url.match(/lh3\.googleusercontent\.com\/d\/([a-zA-Z0-9_-]+)/);
-                return match ? `https://drive.google.com/file/d/${match[1]}/view?usp=sharing` : url;
-            });
-            document.getElementById('images').value = displayImages.join(', ');
-            
-            document.getElementById('description').value = product.description;
+            const p = products.find(prod => prod.id === id);
+            document.getElementById('productId').value = p.id;
+            document.getElementById('name').value = p.name;
+            document.getElementById('price').value = p.price;
+            document.getElementById('department').value = p.department;
+            document.getElementById('images').value = p.images.join(', ');
+            document.getElementById('description').value = p.description;
             document.getElementById('formTitle').innerText = "Editar Producto";
             window.scrollTo(0, 0);
         }
 
-        function changeStatus(id, newStatus) {
-            const index = products.findIndex(p => p.id === id);
-            products[index].status = newStatus;
-            renderAdmin();
-            renderCatalog();
+        function updateStatus(id, newStatus) {
+            products.find(p => p.id === id).status = newStatus;
+            renderAdmin(); renderCatalog();
         }
 
-        function deleteProduct(id) {
-            if(confirm("¿Estás seguro de eliminar este producto definitivamente?")) {
-                products = products.filter(p => p.id !== id);
-                renderAdmin();
-                renderCatalog();
-            }
+        // --- SISTEMA DE VENTAS Y CLIENTES ---
+        function initiateSale(id) {
+            document.getElementById('saleProductId').value = id;
+            document.getElementById('saleName').value = '';
+            document.getElementById('salePhone').value = '';
+            document.getElementById('saleCedula').value = '';
+            document.getElementById('saleModal').classList.remove('hidden');
+        }
+
+        function closeSaleModal() { document.getElementById('saleModal').classList.add('hidden'); }
+
+        function confirmSale(e) {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('saleProductId').value);
+            const p = products.find(prod => prod.id === id);
+            
+            // Crear el registro del cliente
+            const registro = {
+                fecha: new Date().toLocaleDateString('es-ES'),
+                nombre: document.getElementById('saleName').value,
+                telefono: document.getElementById('salePhone').value || "No registrado",
+                cedula: document.getElementById('saleCedula').value || "No registrada"
+            };
+
+            if(!p.historial) p.historial = [];
+            p.historial.push(registro); // Guardar en el historial
+            p.status = 'vendido'; // Cambiar estado
+
+            closeSaleModal();
+            renderAdmin(); renderCatalog();
+            alert(`✅ Venta de ${p.name} registrada a ${registro.nombre}`);
+        }
+
+        // --- HISTORIAL ---
+        function openHistoryModal(id) {
+            const p = products.find(prod => prod.id === id);
+            const content = document.getElementById('historyContent');
+            content.innerHTML = '';
+            
+            [...p.historial].reverse().forEach(h => {
+                content.innerHTML += `
+                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                        <div class="flex justify-between"><span class="font-bold text-gray-800"><i class="fas fa-user text-alfagreen"></i> ${h.nombre}</span> <span class="text-xs text-gray-500">${h.fecha}</span></div>
+                        <div class="text-sm text-gray-600 mt-1">📞 Tel: ${h.telefono} &nbsp;|&nbsp; 🪪 Cédula: ${h.cedula}</div>
+                    </div>
+                `;
+            });
+            document.getElementById('historyModal').classList.remove('hidden');
+        }
+        function closeHistoryModal() { document.getElementById('historyModal').classList.add('hidden'); }
+
+        // --- EXPORTAR BASE DE DATOS (CSV) ---
+        function downloadInventoryCSV() {
+            let csv = "\uFEFF"; // BOM para que Excel lea los acentos (UTF-8)
+            csv += "ID,Producto,Precio,Sucursal,Estado,Historial de Clientes\n";
+            
+            products.forEach(p => {
+                let historyStr = "";
+                if(p.historial && p.historial.length > 0) {
+                    // Juntamos todo el historial en una sola celda
+                    historyStr = p.historial.map(h => `[${h.fecha}] ${h.nombre} (Tel:${h.telefono})`).join(" | ");
+                } else {
+                    historyStr = "Sin ventas";
+                }
+                
+                // Limpiar comas en los textos para no romper el CSV
+                let safeName = p.name.replace(/,/g, '');
+                let safeDept = p.department.replace(/,/g, '');
+                
+                csv += `${p.id},${safeName},${p.price},${safeDept},${p.status},"${historyStr}"\n`;
+            });
+
+            // Crear archivo y forzar descarga
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `Base_Datos_ALFACOMPRAS_${new Date().toLocaleDateString('es-ES').replace(/\//g, '-')}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
 
         function resetForm() {
