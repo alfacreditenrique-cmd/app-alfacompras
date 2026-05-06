@@ -5,20 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ALFACOMPRAS</title>
     <link rel="icon" href="logo.png" type="image/png">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script>
         tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        alfagreen: '#1aa31a', 
-                        alfagrey: '#4a4a4a',
-                        whatsapp: '#25D366'
-                    }
-                }
-            }
+            theme: { extend: { colors: { alfagreen: '#1aa31a', alfagrey: '#4a4a4a', whatsapp: '#25D366' } } }
         }
     </script>
     <style>
@@ -73,7 +64,7 @@
                     <input type="text" id="name" required class="mt-1 w-full rounded-md border-gray-300 border p-2 focus:ring-alfagreen focus:border-alfagreen">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Precio ($ o C$)</label>
+                    <label class="block text-sm font-medium text-gray-700">Precio ($)</label>
                     <input type="number" step="0.01" id="price" required class="mt-1 w-full rounded-md border-gray-300 border p-2 focus:ring-alfagreen focus:border-alfagreen">
                 </div>
                 <div>
@@ -82,7 +73,7 @@
                 </div>
                 <div class="md:col-span-2">
                     <label class="block text-sm font-medium text-gray-700">Enlaces (Separa por comas si son varios)</label>
-                    <input type="text" id="images" required placeholder="Ej: https://drive.google.com/file/d/... " class="mt-1 w-full rounded-md border-gray-300 border p-2 focus:ring-alfagreen focus:border-alfagreen">
+                    <input type="text" id="images" required placeholder="Ej: https://drive.google... , https://..." class="mt-1 w-full rounded-md border-gray-300 border p-2 focus:ring-alfagreen focus:border-alfagreen">
                 </div>
                 <div class="md:col-span-3">
                     <label class="block text-sm font-medium text-gray-700">Descripción</label>
@@ -114,7 +105,7 @@
     <div id="galleryModal" class="fixed inset-0 bg-black bg-opacity-95 hidden flex-col justify-center items-center z-[60] backdrop-blur-sm p-4 transition-opacity">
         <button onclick="closeGallery()" class="absolute top-6 right-6 text-white text-4xl hover:text-gray-300">×</button>
         <div id="galleryContainer" class="flex overflow-x-auto snap-x snap-mandatory w-full max-w-4xl gap-6 pb-4 scrollbar-hide"></div>
-        <p class="text-gray-400 mt-4 text-sm"><i class="fas fa-arrows-alt-h"></i> Desliza horizontalmente para ver más fotos</p>
+        <p class="text-gray-400 mt-4 text-sm"><i class="fas fa-arrows-alt-h"></i> Desliza horizontalmente para ver fotos</p>
     </div>
 
     <div id="waModal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex justify-center items-center z-50 backdrop-blur-sm p-4">
@@ -124,8 +115,8 @@
             <input type="text" id="waClientName" placeholder="Tu nombre y apellido" class="w-full border-2 p-3 rounded-lg mb-4 focus:border-alfagreen outline-none">
             <input type="hidden" id="waProductId">
             <div class="flex gap-2">
-                <button onclick="closeWaModal()" class="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg font-bold hover:bg-gray-200 transition">Cancelar</button>
-                <button onclick="confirmWa()" class="flex-1 px-4 py-3 bg-whatsapp text-white rounded-lg font-bold hover:bg-green-500 transition">Ir a WhatsApp</button>
+                <button onclick="closeWaModal()" class="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg font-bold">Cancelar</button>
+                <button onclick="confirmWa()" class="flex-1 px-4 py-3 bg-whatsapp text-white rounded-lg font-bold">Ir a WhatsApp</button>
             </div>
         </div>
     </div>
@@ -150,7 +141,7 @@
     <div id="historyModal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex justify-center items-center z-50 backdrop-blur-sm p-4">
         <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-lg w-full">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold"><i class="fas fa-history text-alfagreen"></i> Historial de Ventas</h3>
+                <h3 class="text-xl font-bold"><i class="fas fa-history text-alfagreen"></i> Historial</h3>
                 <button onclick="document.getElementById('historyModal').classList.add('hidden')" class="text-2xl text-gray-400 hover:text-red-500">×</button>
             </div>
             <div id="historyContent" class="max-h-60 overflow-y-auto space-y-3"></div>
@@ -160,7 +151,7 @@
     <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-80 hidden flex justify-center items-center z-[70] backdrop-blur-md p-4">
         <div class="bg-white p-8 rounded-2xl max-w-sm w-full text-center shadow-2xl">
             <h3 class="text-2xl font-bold mb-2">🔒 Acceso Secreto</h3>
-            <p class="text-gray-500 text-sm mb-4">Solo administradores autorizados.</p>
+            <p class="text-gray-500 text-sm mb-4">Solo administradores.</p>
             <input type="password" id="adminPwd" class="w-full border-2 p-3 rounded-lg mb-6 text-center focus:border-alfagreen outline-none" placeholder="Contraseña">
             <div class="flex gap-3">
                 <button onclick="document.getElementById('loginModal').classList.add('hidden')" class="flex-1 py-3 bg-gray-100 rounded-lg font-semibold">Salir</button>
@@ -170,9 +161,6 @@
     </div>
 
     <script>
-        // ==========================================
-        // CONFIGURACIÓN DE FIREBASE Y WHATSAPP
-        // ==========================================
         const WHATSAPP_NUMBER = "50586920352"; 
         const FIREBASE_URL = "https://alfacompras-default-rtdb.firebaseio.com"; 
 
@@ -189,30 +177,26 @@
         }
 
         // ==========================================
-        // LÓGICA DE BASE DE DATOS (NUBE) - MEJORADA CON ALERTAS DE ERROR
+        // LÓGICA DE BASE DE DATOS MEJORADA
         // ==========================================
 
         async function fetchProducts() {
             try {
                 const response = await fetch(`${FIREBASE_URL}/productos.json`);
+                if (!response.ok) throw new Error(`Firebase bloqueó la lectura (Error ${response.status}).`);
                 
-                if (!response.ok) {
-                    throw new Error(`Acceso denegado por Firebase (Código: ${response.status}). ¡Revisa las reglas en Firebase!`);
-                }
-
                 const data = await response.json();
-                
                 if (data) {
-                    products = Object.keys(data).map(key => ({
-                        firebaseKey: key,
-                        ...data[key]
-                    }));
+                    // LIMPIEZA DE FANTASMAS (Filtra nulls y undefineds)
+                    products = Object.keys(data)
+                        .map(key => data[key] ? { firebaseKey: key, ...data[key] } : null)
+                        .filter(item => item !== null && item.name); // Asegura que tengan nombre
                 } else {
                     products = [];
                 }
             } catch (error) {
-                console.error("Error al cargar datos:", error);
-                alert(`Error al cargar: ${error.message}`);
+                console.error("Error al cargar:", error);
+                alert(`🚨 ERROR DE CONEXIÓN: ${error.message}\n\nAsegúrate de haber publicado las reglas en Firebase.`);
             } finally {
                 document.getElementById('loadingOverlay').classList.add('hidden');
                 renderCatalog();
@@ -227,23 +211,22 @@
             
             const method = firebaseKey ? 'PUT' : 'POST';
 
-            try {
-                const response = await fetch(url, {
-                    method: method,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(productData)
-                });
+            const response = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(productData)
+            });
 
-                if (!response.ok) {
-                    throw new Error(`Firebase rechazó la operación (Código: ${response.status}). Asegúrate de haber puesto .read y .write en true en la consola de Firebase.`);
-                }
-
-                await fetchProducts(); 
-            } catch (error) {
-                console.error("Error al guardar:", error);
-                alert(`Error crítico al guardar: ${error.message}`);
-                throw error; // Detener la ejecución si hay error
+            if (!response.ok) {
+                throw new Error(`Firebase bloqueó la escritura (Error ${response.status}).`);
             }
+            await fetchProducts(); 
+        }
+
+        async function deleteProductFromDB(firebaseKey) {
+            const response = await fetch(`${FIREBASE_URL}/productos/${firebaseKey}.json`, { method: 'DELETE' });
+            if(!response.ok) throw new Error("No se pudo eliminar de la base de datos.");
+            await fetchProducts();
         }
 
         document.addEventListener('DOMContentLoaded', () => { fetchProducts(); });
@@ -252,10 +235,7 @@
         // INTERFAZ Y RENDERIZADO
         // ==========================================
 
-        function tryAdmin() { 
-            if (isAdminAuthed) showView('admin'); 
-            else document.getElementById('loginModal').classList.remove('hidden'); 
-        }
+        function tryAdmin() { if (isAdminAuthed) showView('admin'); else document.getElementById('loginModal').classList.remove('hidden'); }
         function checkAdminPassword() {
             if (document.getElementById('adminPwd').value === 'admin') {
                 isAdminAuthed = true;
@@ -266,12 +246,7 @@
                 renderAdmin();
             } else { alert('❌ Contraseña incorrecta'); }
         }
-        function logoutAdmin() { 
-            isAdminAuthed = false; 
-            document.getElementById('backToCatalogBtn').classList.add('hidden');
-            showView('catalog'); 
-        }
-
+        function logoutAdmin() { isAdminAuthed = false; document.getElementById('backToCatalogBtn').classList.add('hidden'); showView('catalog'); }
         function showView(view) {
             document.getElementById('catalogView').style.display = view === 'catalog' ? 'block' : 'none';
             document.getElementById('adminView').style.display = view === 'admin' ? 'block' : 'none';
@@ -292,13 +267,11 @@
                 let imgCount = p.images ? p.images.length : 0;
                 let mainImg = imgCount > 0 ? p.images[0] : "https://via.placeholder.com/400x300?text=No+Img";
                 let photoBadge = imgCount > 1 ? `<div class="absolute top-2 right-2 bg-black bg-opacity-70 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-images"></i> +${imgCount - 1} Fotos</div>` : '';
-                let cursorStyle = imgCount > 0 ? "cursor-pointer" : "";
-                let clickAction = imgCount > 0 ? `onclick="openGallery(${p.id})"` : ""; 
-
+                
                 grid.innerHTML += `
                     <div class="product-card bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
-                        <div class="h-60 relative flex justify-center items-center bg-white border-b border-gray-100 ${cursorStyle}" ${clickAction} title="Ver fotos">
-                            <img src="${mainImg}" class="max-h-full max-w-full object-contain p-2" onerror="this.src='https://via.placeholder.com/400x300?text=Error+de+Imagen'">
+                        <div class="h-60 relative flex justify-center items-center bg-white border-b border-gray-100 ${imgCount > 0 ? 'cursor-pointer' : ''}" onclick="openGallery(${p.id})">
+                            <img src="${mainImg}" class="max-h-full max-w-full object-contain p-2" onerror="this.src='https://via.placeholder.com/400x300?text=Error'">
                             ${photoBadge}
                         </div>
                         <div class="p-6 flex flex-col flex-grow">
@@ -339,11 +312,12 @@
                         <td class="px-6 py-4 font-bold text-gray-600">$${parseFloat(p.price).toFixed(2)}</td>
                         <td class="px-6 py-4">${statusBadge}</td>
                         <td class="px-6 py-4 text-center">${historyBtn}</td>
-                        <td class="px-6 py-4 text-right">
-                            <button onclick="editProduct(${p.id})" class="text-blue-500 bg-blue-50 p-2 rounded-lg mx-1 hover:bg-blue-100"><i class="fas fa-edit"></i></button>
-                            <button onclick="document.getElementById('saleProductId').value=${p.id}; document.getElementById('saleModal').classList.remove('hidden');" class="text-yellow-600 bg-yellow-50 p-2 rounded-lg mx-1 hover:bg-yellow-100"><i class="fas fa-handshake"></i></button>
-                            <button onclick="updateStatus(${p.id}, 'baja')" class="text-red-500 bg-red-50 p-2 rounded-lg mx-1 hover:bg-red-100"><i class="fas fa-arrow-down"></i></button>
-                            <button onclick="updateStatus(${p.id}, 'activo')" class="text-green-600 bg-green-50 p-2 rounded-lg mx-1 hover:bg-green-100"><i class="fas fa-check"></i></button>
+                        <td class="px-6 py-4 text-right whitespace-nowrap">
+                            <button onclick="editProduct(${p.id})" class="text-blue-500 bg-blue-50 p-2 rounded-lg mx-1 hover:bg-blue-100" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button onclick="document.getElementById('saleProductId').value=${p.id}; document.getElementById('saleModal').classList.remove('hidden');" class="text-yellow-600 bg-yellow-50 p-2 rounded-lg mx-1 hover:bg-yellow-100" title="Vender"><i class="fas fa-handshake"></i></button>
+                            <button onclick="updateStatus(${p.id}, 'baja')" class="text-gray-500 bg-gray-100 p-2 rounded-lg mx-1 hover:bg-gray-200" title="Dar de baja"><i class="fas fa-arrow-down"></i></button>
+                            <button onclick="updateStatus(${p.id}, 'activo')" class="text-green-600 bg-green-50 p-2 rounded-lg mx-1 hover:bg-green-100" title="Activar"><i class="fas fa-check"></i></button>
+                            <button onclick="eliminarDefinitivo('${p.firebaseKey}')" class="text-red-500 bg-red-50 p-2 rounded-lg mx-1 hover:bg-red-100" title="Eliminar para siempre"><i class="fas fa-trash"></i></button>
                         </td>
                     </tr>
                 `;
@@ -352,40 +326,35 @@
 
         async function saveProduct(e) {
             e.preventDefault();
-            
             const btn = document.getElementById('submitBtn');
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
             btn.disabled = true;
 
-            const id = document.getElementById('productId').value;
-            
-            const pData = {
-                name: document.getElementById('name').value,
-                price: parseFloat(document.getElementById('price').value),
-                department: document.getElementById('department').value,
-                images: processDriveLinks(document.getElementById('images').value),
-                description: document.getElementById('description').value,
-            };
-
             try {
+                const id = document.getElementById('productId').value;
+                const pData = {
+                    name: document.getElementById('name').value,
+                    price: parseFloat(document.getElementById('price').value),
+                    department: document.getElementById('department').value,
+                    images: processDriveLinks(document.getElementById('images').value),
+                    description: document.getElementById('description').value,
+                };
+
                 if (id) {
                     const existingProduct = products.find(p => p.id == id);
                     pData.id = parseInt(id); 
                     pData.status = existingProduct.status;
                     pData.historial = existingProduct.historial || [];
-                    
                     await saveProductToDB(pData, existingProduct.firebaseKey);
                 } else {
                     pData.id = Date.now(); 
                     pData.status = 'activo';
                     pData.historial = [];
-                    
                     await saveProductToDB(pData); 
                 }
-                
                 resetForm(); 
             } catch (err) {
-                console.log("No se pudo completar el guardado.");
+                alert(`🚨 ERROR: No se pudo guardar.\n${err.message}`);
             } finally {
                 btn.innerHTML = 'Guardar Producto';
                 btn.disabled = false;
@@ -411,13 +380,25 @@
         }
 
         async function updateStatus(id, newStatus) {
-            const product = products.find(p => p.id === id);
-            product.status = newStatus;
-            
-            const dataToSave = {...product};
-            delete dataToSave.firebaseKey;
+            try {
+                const product = products.find(p => p.id === id);
+                product.status = newStatus;
+                const dataToSave = {...product};
+                delete dataToSave.firebaseKey;
+                await saveProductToDB(dataToSave, product.firebaseKey);
+            } catch (error) {
+                alert("No se pudo actualizar el estado.");
+            }
+        }
 
-            await saveProductToDB(dataToSave, product.firebaseKey);
+        async function eliminarDefinitivo(firebaseKey) {
+            if(confirm("¿Estás seguro de ELIMINAR ESTE PRODUCTO DE LA NUBE PARA SIEMPRE? Esto no se puede deshacer.")) {
+                try {
+                    await deleteProductFromDB(firebaseKey);
+                } catch(error) {
+                    alert("No se pudo eliminar.");
+                }
+            }
         }
 
         async function confirmSale(e) {
@@ -426,28 +407,27 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando...';
             btn.disabled = true;
 
-            const id = parseInt(document.getElementById('saleProductId').value);
-            const product = products.find(prod => prod.id === id);
-            
-            if(!product.historial) product.historial = [];
-            
-            product.historial.push({
-                fecha: new Date().toLocaleDateString('es-ES'),
-                nombre: document.getElementById('saleName').value,
-                telefono: document.getElementById('salePhone').value || "N/A",
-                cedula: document.getElementById('saleCedula').value || "N/A"
-            });
-            product.status = 'vendido';
-            
-            const dataToSave = {...product};
-            delete dataToSave.firebaseKey;
-
             try {
+                const id = parseInt(document.getElementById('saleProductId').value);
+                const product = products.find(prod => prod.id === id);
+                
+                if(!product.historial) product.historial = [];
+                product.historial.push({
+                    fecha: new Date().toLocaleDateString('es-ES'),
+                    nombre: document.getElementById('saleName').value,
+                    telefono: document.getElementById('salePhone').value || "N/A",
+                    cedula: document.getElementById('saleCedula').value || "N/A"
+                });
+                product.status = 'vendido';
+                
+                const dataToSave = {...product};
+                delete dataToSave.firebaseKey;
                 await saveProductToDB(dataToSave, product.firebaseKey);
+                
                 document.getElementById('saleForm').reset();
                 document.getElementById('saleModal').classList.add('hidden');
             } catch(err) {
-                console.log("Error al registrar venta.");
+                alert("🚨 Error al registrar la venta en la nube.");
             } finally {
                 btn.innerHTML = 'Vender';
                 btn.disabled = false;
@@ -457,13 +437,12 @@
         // ==========================================
         // FUNCIONES MENORES 
         // ==========================================
-
         function openGallery(id) {
             const p = products.find(prod => prod.id === id);
             const container = document.getElementById('galleryContainer');
             container.innerHTML = '';
             p.images.forEach(img => {
-                container.innerHTML += `<div class="w-full h-[70vh] flex-shrink-0 snap-center flex justify-center items-center"><img src="${img}" class="max-h-full max-w-full object-contain rounded-lg" onerror="this.src='https://via.placeholder.com/600x400?text=Error'"></div>`;
+                container.innerHTML += `<div class="w-full h-[70vh] flex-shrink-0 snap-center flex justify-center items-center"><img src="${img}" class="max-h-full max-w-full object-contain rounded-lg"></div>`;
             });
             document.getElementById('galleryModal').classList.remove('hidden');
             document.getElementById('galleryModal').classList.add('flex');
@@ -498,7 +477,7 @@
             });
             const a = document.createElement("a");
             a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
-            a.download = `Inventario_${new Date().toLocaleDateString('es-ES').replace(/\//g, '-')}.csv`;
+            a.download = `Inventario_ALFACOMPRAS_${new Date().toLocaleDateString('es-ES').replace(/\//g, '-')}.csv`;
             a.click();
         }
 
