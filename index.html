@@ -24,41 +24,37 @@
     <style>
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        
         .product-card { transition: all 0.3s ease; }
         .product-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
 
-    <!-- NAVEGACIÓN SECRETA -->
     <nav class="bg-white shadow-sm p-4 sticky top-0 z-40 border-b border-gray-200">
         <div class="max-w-7xl mx-auto flex justify-center md:justify-between items-center">
-            
-            <!-- EL ACCESO SECRETO AL ADMIN ESTÁ AQUÍ (Doble Clic en el logo) -->
             <div class="flex items-center gap-3 cursor-pointer select-none" ondblclick="tryAdmin()" title="Doble clic para admin">
                 <img src="logo.png" alt="Logo" class="h-10 object-contain" onerror="this.style.display='none'">
                 <h1 class="text-2xl font-extrabold text-alfagrey tracking-tight">ALFA<span class="text-alfagreen">COMPRAS</span></h1>
             </div>
-
-            <!-- Botón volver al catálogo (Solo visible si estás en admin) -->
             <div id="backToCatalogBtn" class="hidden md:flex gap-2">
                 <button onclick="showView('catalog')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md font-semibold hover:bg-gray-200 transition"><i class="fas fa-store"></i> Ver Catálogo</button>
             </div>
         </div>
     </nav>
 
-    <!-- VISTA CLIENTE -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-white bg-opacity-90 z-50 flex flex-col justify-center items-center">
+        <i class="fas fa-circle-notch fa-spin text-4xl text-alfagreen mb-4"></i>
+        <p class="text-gray-600 font-semibold">Conectando con ALFACOMPRAS...</p>
+    </div>
+
     <main id="catalogView" class="max-w-7xl mx-auto p-6 block">
         <div class="text-center mb-10 mt-2">
             <h2 class="text-3xl font-bold text-gray-800 mb-2">Catálogo de Productos</h2>
             <p class="text-gray-500">¡Confiamos en ti! Selecciona un producto para pedirlo.</p>
         </div>
-        
         <div id="productGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
     </main>
 
-    <!-- VISTA ADMIN -->
     <main id="adminView" class="max-w-7xl mx-auto p-6 hidden">
         <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
             <h2 class="text-3xl font-bold text-gray-800">Panel de Control</h2>
@@ -68,7 +64,6 @@
             </div>
         </div>
         
-        <!-- Formulario Crear/Editar -->
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-8">
             <h3 class="text-xl font-bold mb-4 text-alfagreen" id="formTitle">Agregar Nuevo Producto</h3>
             <form id="productForm" onsubmit="saveProduct(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -95,7 +90,7 @@
                 </div>
                 <div class="md:col-span-3 flex justify-end gap-2 mt-2">
                     <button type="button" onclick="resetForm()" class="px-5 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-semibold">Cancelar</button>
-                    <button type="submit" class="px-5 py-2 bg-alfagreen text-white rounded-md hover:bg-green-700 font-semibold">Guardar Producto</button>
+                    <button type="submit" id="submitBtn" class="px-5 py-2 bg-alfagreen text-white rounded-md hover:bg-green-700 font-semibold flex items-center gap-2">Guardar Producto</button>
                 </div>
             </form>
         </div>
@@ -116,16 +111,12 @@
         </div>
     </main>
 
-    <!-- MODAL: GALERÍA DE IMÁGENES -->
     <div id="galleryModal" class="fixed inset-0 bg-black bg-opacity-95 hidden flex-col justify-center items-center z-[60] backdrop-blur-sm p-4 transition-opacity">
-        <button onclick="closeGallery()" class="absolute top-6 right-6 text-white text-4xl hover:text-gray-300">&times;</button>
-        <div id="galleryContainer" class="flex overflow-x-auto snap-x snap-mandatory w-full max-w-4xl gap-6 pb-4 scrollbar-hide">
-            <!-- Las fotos grandes se inyectan aquí -->
-        </div>
+        <button onclick="closeGallery()" class="absolute top-6 right-6 text-white text-4xl hover:text-gray-300">×</button>
+        <div id="galleryContainer" class="flex overflow-x-auto snap-x snap-mandatory w-full max-w-4xl gap-6 pb-4 scrollbar-hide"></div>
         <p class="text-gray-400 mt-4 text-sm"><i class="fas fa-arrows-alt-h"></i> Desliza horizontalmente para ver más fotos</p>
     </div>
 
-    <!-- MODAL: PEDIR POR WHATSAPP (AQUÍ PIDE EL NOMBRE) -->
     <div id="waModal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex justify-center items-center z-50 backdrop-blur-sm p-4">
         <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full">
             <h3 class="text-xl font-bold mb-2 text-alfagreen"><i class="fab fa-whatsapp"></i> Completar Pedido</h3>
@@ -139,8 +130,6 @@
         </div>
     </div>
 
-    <!-- MODALES DE ADMIN (Ventas, Historial, Login) -->
-    <!-- Modal Registrar Venta Admin -->
     <div id="saleModal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex justify-center items-center z-50 backdrop-blur-sm p-4">
         <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-md w-full">
             <h3 class="text-2xl font-bold mb-1 text-alfagreen"><i class="fas fa-handshake"></i> Registrar Venta</h3>
@@ -152,24 +141,22 @@
                 <div class="mb-5"><label class="block text-sm font-bold">Cédula (Opcional)</label><input type="text" id="saleCedula" class="w-full border p-2 rounded-lg mt-1"></div>
                 <div class="flex gap-2">
                     <button type="button" onclick="document.getElementById('saleModal').classList.add('hidden')" class="flex-1 px-4 py-2 bg-gray-200 rounded-lg font-bold">Cancelar</button>
-                    <button type="submit" class="flex-1 px-4 py-2 bg-alfagreen text-white rounded-lg font-bold">Vender</button>
+                    <button type="submit" id="btnConfirmSale" class="flex-1 px-4 py-2 bg-alfagreen text-white rounded-lg font-bold">Vender</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal Historial Admin -->
     <div id="historyModal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex justify-center items-center z-50 backdrop-blur-sm p-4">
         <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-lg w-full">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-bold"><i class="fas fa-history text-alfagreen"></i> Historial de Ventas</h3>
-                <button onclick="document.getElementById('historyModal').classList.add('hidden')" class="text-2xl text-gray-400 hover:text-red-500">&times;</button>
+                <button onclick="document.getElementById('historyModal').classList.add('hidden')" class="text-2xl text-gray-400 hover:text-red-500">×</button>
             </div>
             <div id="historyContent" class="max-h-60 overflow-y-auto space-y-3"></div>
         </div>
     </div>
 
-    <!-- Modal Login Secreto -->
     <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-80 hidden flex justify-center items-center z-[70] backdrop-blur-md p-4">
         <div class="bg-white p-8 rounded-2xl max-w-sm w-full text-center shadow-2xl">
             <h3 class="text-2xl font-bold mb-2">🔒 Acceso Secreto</h3>
@@ -183,31 +170,79 @@
     </div>
 
     <script>
+        // ==========================================
+        // CONFIGURACIÓN DE FIREBASE Y WHATSAPP
+        // ==========================================
         const WHATSAPP_NUMBER = "50586920352"; 
-        let isAdminAuthed = false;
+        
+        // ¡LINK DE FIREBASE INTEGRADO! (Sin la barra o los dos puntos al final)
+        const FIREBASE_URL = "https://alfacompras-default-rtdb.firebaseio.com"; 
 
-        // EXTRAE EL ID DE CUALQUIER LINK DE DRIVE (Es muy robusto ahora)
+        let isAdminAuthed = false;
+        let products = []; 
+
         function processDriveLinks(inputStr) {
             if (!inputStr) return [];
             return inputStr.split(',').map(url => {
                 let cleanUrl = url.trim();
-                // Busca cadenas de texto largas que parezcan IDs de Google Drive
                 const match = cleanUrl.match(/[-\w]{25,}/);
                 return match ? `https://lh3.googleusercontent.com/d/${match[0]}` : cleanUrl;
             }).filter(url => url !== "");
         }
 
-        function loadData() {
-            const data = localStorage.getItem('alfa_database');
-            return data ? JSON.parse(data) : [];
+        // ==========================================
+        // LÓGICA DE BASE DE DATOS (NUBE)
+        // ==========================================
+
+        async function fetchProducts() {
+            try {
+                const response = await fetch(`${FIREBASE_URL}/productos.json`);
+                const data = await response.json();
+                
+                if (data) {
+                    products = Object.keys(data).map(key => ({
+                        firebaseKey: key,
+                        ...data[key]
+                    }));
+                } else {
+                    products = [];
+                }
+            } catch (error) {
+                console.error("Error al cargar datos:", error);
+                alert("Hubo un problema conectando a la base de datos.");
+            } finally {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+                renderCatalog();
+                if(isAdminAuthed) renderAdmin();
+            }
         }
-        function saveData() { localStorage.setItem('alfa_database', JSON.stringify(products)); }
 
-        let products = loadData();
+        async function saveProductToDB(productData, firebaseKey = null) {
+            const url = firebaseKey 
+                ? `${FIREBASE_URL}/productos/${firebaseKey}.json` 
+                : `${FIREBASE_URL}/productos.json`; 
+            
+            const method = firebaseKey ? 'PUT' : 'POST';
 
-        document.addEventListener('DOMContentLoaded', () => { renderCatalog(); renderAdmin(); });
+            try {
+                await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(productData)
+                });
+                await fetchProducts(); 
+            } catch (error) {
+                console.error("Error al guardar:", error);
+                alert("Error al guardar en la nube.");
+            }
+        }
 
-        // --- SISTEMA DE LOGIN Y VISTAS ---
+        document.addEventListener('DOMContentLoaded', () => { fetchProducts(); });
+
+        // ==========================================
+        // INTERFAZ Y RENDERIZADO
+        // ==========================================
+
         function tryAdmin() { 
             if (isAdminAuthed) showView('admin'); 
             else document.getElementById('loginModal').classList.remove('hidden'); 
@@ -219,6 +254,7 @@
                 document.getElementById('loginModal').classList.add('hidden');
                 document.getElementById('backToCatalogBtn').classList.remove('hidden');
                 showView('admin');
+                renderAdmin();
             } else { alert('❌ Contraseña incorrecta'); }
         }
         function logoutAdmin() { 
@@ -233,29 +269,22 @@
             if(view === 'catalog') renderCatalog();
         }
 
-        // --- CATÁLOGO Y GALERÍA ---
         function renderCatalog() {
             const grid = document.getElementById('productGrid');
             grid.innerHTML = '';
             const activeProducts = products.filter(p => p.status === 'activo');
             
             if(activeProducts.length === 0) {
-                grid.innerHTML = '<div class="col-span-full py-10 text-center text-gray-500">No hay productos disponibles.</div>';
+                grid.innerHTML = '<div class="col-span-full py-10 text-center text-gray-500">No hay productos disponibles actualmente.</div>';
                 return;
             }
 
             activeProducts.forEach(p => {
                 let imgCount = p.images ? p.images.length : 0;
                 let mainImg = imgCount > 0 ? p.images[0] : "https://via.placeholder.com/400x300?text=No+Img";
-                
-                // Si hay más de una foto, mostramos un badge sobre la imagen principal
-                let photoBadge = imgCount > 1 
-                    ? `<div class="absolute top-2 right-2 bg-black bg-opacity-70 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-images"></i> +${imgCount - 1} Fotos</div>` 
-                    : '';
-
-                // La imagen es clickeable si hay múltiples fotos
+                let photoBadge = imgCount > 1 ? `<div class="absolute top-2 right-2 bg-black bg-opacity-70 text-white text-xs font-bold px-3 py-1 rounded-full"><i class="fas fa-images"></i> +${imgCount - 1} Fotos</div>` : '';
                 let cursorStyle = imgCount > 0 ? "cursor-pointer" : "";
-                let clickAction = imgCount > 0 ? `onclick="openGallery(${p.id})"` : "";
+                let clickAction = imgCount > 0 ? `onclick="openGallery(${p.id})"` : ""; 
 
                 grid.innerHTML += `
                     <div class="product-card bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
@@ -277,57 +306,15 @@
             });
         }
 
-        function openGallery(id) {
-            const p = products.find(prod => prod.id === id);
-            if (!p || !p.images || p.images.length === 0) return;
+        // ==========================================
+        // FUNCIONES ADMIN (Interactuando con la Nube)
+        // ==========================================
 
-            const container = document.getElementById('galleryContainer');
-            container.innerHTML = '';
-            
-            p.images.forEach(img => {
-                container.innerHTML += `
-                    <div class="w-full h-[70vh] flex-shrink-0 snap-center flex justify-center items-center">
-                        <img src="${img}" class="max-h-full max-w-full object-contain rounded-lg">
-                    </div>
-                `;
-            });
-            document.getElementById('galleryModal').classList.remove('hidden');
-            document.getElementById('galleryModal').classList.add('flex');
-        }
-
-        function closeGallery() {
-            document.getElementById('galleryModal').classList.add('hidden');
-            document.getElementById('galleryModal').classList.remove('flex');
-        }
-
-        // --- SISTEMA DE PEDIDOS WHATSAPP ---
-        function initiateWhatsapp(id) {
-            document.getElementById('waProductId').value = id;
-            document.getElementById('waClientName').value = '';
-            document.getElementById('waModal').classList.remove('hidden');
-        }
-        
-        function closeWaModal() { document.getElementById('waModal').classList.add('hidden'); }
-        
-        function confirmWa() {
-            let name = document.getElementById('waClientName').value.trim();
-            if(!name) { alert("Por favor, dinos tu nombre para continuar."); return; }
-            
-            let id = parseInt(document.getElementById('waProductId').value);
-            const p = products.find(prod => prod.id === id);
-            
-            const text = `¡Hola! Mi nombre es *${name}*.\n\nMe interesa pedir el siguiente artículo:\n📦 *${p.name}*\n📍 Sucursal: ${p.department}\n💵 Precio: $${p.price}\n\n¿Aún está disponible?`;
-            
-            closeWaModal();
-            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank');
-        }
-
-        // --- ADMIN FUNCIONES ---
         function renderAdmin() {
             const tbody = document.getElementById('adminTableBody');
             tbody.innerHTML = '';
             
-            [...products].reverse().forEach(p => {
+            [...products].sort((a,b) => b.id - a.id).forEach(p => {
                 let statusBadge = p.status === 'activo' ? '<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">Activo</span>' :
                                   p.status === 'vendido' ? '<span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold">Vendido</span>' :
                                   '<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold">Inactivo</span>';
@@ -352,12 +339,17 @@
                     </tr>
                 `;
             });
-            saveData();
         }
 
-        function saveProduct(e) {
+        async function saveProduct(e) {
             e.preventDefault();
+            
+            const btn = document.getElementById('submitBtn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+            btn.disabled = true;
+
             const id = document.getElementById('productId').value;
+            
             const pData = {
                 name: document.getElementById('name').value,
                 price: parseFloat(document.getElementById('price').value),
@@ -367,55 +359,107 @@
             };
 
             if (id) {
-                const idx = products.findIndex(p => p.id == id);
-                pData.id = parseInt(id);
-                pData.status = products[idx].status;
-                pData.historial = products[idx].historial || [];
-                products[idx] = pData;
+                const existingProduct = products.find(p => p.id == id);
+                pData.id = parseInt(id); 
+                pData.status = existingProduct.status;
+                pData.historial = existingProduct.historial || [];
+                
+                await saveProductToDB(pData, existingProduct.firebaseKey);
             } else {
-                pData.id = Date.now();
+                pData.id = Date.now(); 
                 pData.status = 'activo';
                 pData.historial = [];
-                products.push(pData);
+                
+                await saveProductToDB(pData); 
             }
-            resetForm(); renderAdmin(); renderCatalog();
+            
+            resetForm(); 
+            btn.innerHTML = 'Guardar Producto';
+            btn.disabled = false;
         }
 
         function editProduct(id) {
             const p = products.find(prod => prod.id === id);
-            document.getElementById('productId').value = p.id;
+            document.getElementById('productId').value = p.id; 
             document.getElementById('name').value = p.name;
             document.getElementById('price').value = p.price;
             document.getElementById('department').value = p.department;
-            // Mostramos los IDs de vuelta para no saturar al admin
-            document.getElementById('images').value = p.images.join(', ');
+            
+            let originalLinks = p.images.map(url => {
+                const match = url.match(/d\/([-\w]{25,})/);
+                return match ? `https://drive.google.com/file/d/${match[1]}/view` : url;
+            });
+
+            document.getElementById('images').value = originalLinks.join(', ');
             document.getElementById('description').value = p.description;
             document.getElementById('formTitle').innerText = "Editar Producto";
             window.scrollTo(0, 0);
         }
 
-        function updateStatus(id, newStatus) {
-            products.find(p => p.id === id).status = newStatus;
-            renderAdmin(); renderCatalog();
+        async function updateStatus(id, newStatus) {
+            const product = products.find(p => p.id === id);
+            product.status = newStatus;
+            
+            const dataToSave = {...product};
+            delete dataToSave.firebaseKey;
+
+            await saveProductToDB(dataToSave, product.firebaseKey);
         }
 
-        function confirmSale(e) {
+        async function confirmSale(e) {
             e.preventDefault();
+            const btn = document.getElementById('btnConfirmSale');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando...';
+            btn.disabled = true;
+
             const id = parseInt(document.getElementById('saleProductId').value);
-            const p = products.find(prod => prod.id === id);
+            const product = products.find(prod => prod.id === id);
             
-            if(!p.historial) p.historial = [];
-            p.historial.push({
+            if(!product.historial) product.historial = [];
+            
+            product.historial.push({
                 fecha: new Date().toLocaleDateString('es-ES'),
                 nombre: document.getElementById('saleName').value,
                 telefono: document.getElementById('salePhone').value || "N/A",
                 cedula: document.getElementById('saleCedula').value || "N/A"
             });
-            p.status = 'vendido';
+            product.status = 'vendido';
+            
+            const dataToSave = {...product};
+            delete dataToSave.firebaseKey;
+
+            await saveProductToDB(dataToSave, product.firebaseKey);
             
             document.getElementById('saleForm').reset();
             document.getElementById('saleModal').classList.add('hidden');
-            renderAdmin(); renderCatalog();
+            btn.innerHTML = 'Vender';
+            btn.disabled = false;
+        }
+
+        // ==========================================
+        // FUNCIONES MENORES (Galería, Historial, Exportar)
+        // ==========================================
+
+        function openGallery(id) {
+            const p = products.find(prod => prod.id === id);
+            const container = document.getElementById('galleryContainer');
+            container.innerHTML = '';
+            p.images.forEach(img => {
+                container.innerHTML += `<div class="w-full h-[70vh] flex-shrink-0 snap-center flex justify-center items-center"><img src="${img}" class="max-h-full max-w-full object-contain rounded-lg"></div>`;
+            });
+            document.getElementById('galleryModal').classList.remove('hidden');
+            document.getElementById('galleryModal').classList.add('flex');
+        }
+        function closeGallery() { document.getElementById('galleryModal').classList.add('hidden'); document.getElementById('galleryModal').classList.remove('flex'); }
+
+        function initiateWhatsapp(id) { document.getElementById('waProductId').value = id; document.getElementById('waClientName').value = ''; document.getElementById('waModal').classList.remove('hidden'); }
+        function closeWaModal() { document.getElementById('waModal').classList.add('hidden'); }
+        function confirmWa() {
+            let name = document.getElementById('waClientName').value.trim();
+            if(!name) { alert("Por favor, dinos tu nombre para continuar."); return; }
+            let p = products.find(prod => prod.id === parseInt(document.getElementById('waProductId').value));
+            closeWaModal();
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`¡Hola! Mi nombre es *${name}*.\n\nMe interesa pedir el siguiente artículo:\n📦 *${p.name}*\n📍 Sucursal: ${p.department}\n💵 Precio: $${p.price}\n\n¿Aún está disponible?`)}`, '_blank');
         }
 
         function openHistoryModal(id) {
@@ -423,9 +467,7 @@
             const content = document.getElementById('historyContent');
             content.innerHTML = '';
             [...p.historial].reverse().forEach(h => {
-                content.innerHTML += `<div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                    <div class="flex justify-between"><span class="font-bold text-gray-800">${h.nombre}</span> <span class="text-xs text-gray-500">${h.fecha}</span></div>
-                    <div class="text-sm text-gray-600 mt-1">📞 ${h.telefono} | 🪪 ${h.cedula}</div></div>`;
+                content.innerHTML += `<div class="bg-gray-50 p-3 rounded-lg border border-gray-200"><div class="flex justify-between"><span class="font-bold text-gray-800">${h.nombre}</span> <span class="text-xs text-gray-500">${h.fecha}</span></div><div class="text-sm text-gray-600 mt-1">📞 ${h.telefono} | 🪪 ${h.cedula}</div></div>`;
             });
             document.getElementById('historyModal').classList.remove('hidden');
         }
